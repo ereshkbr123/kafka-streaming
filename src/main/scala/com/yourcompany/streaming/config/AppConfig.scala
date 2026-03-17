@@ -1,4 +1,4 @@
-package com.example.streaming.config
+package com.yourcompany.streaming.config
 
 import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConverters._
@@ -55,10 +55,15 @@ object AppConfig {
     primaryKeys: List[String],
     dedupLookbackDays: Int,
     customTransformerClass: String,
-    fieldMappings: List[FieldMapping]
+    customFlattenerClass: String,
+    fieldMappings: List[FieldMapping],
+    extraParams: Map[String, String]       // open bag — any extra key-value from config
   ) {
     def fullTableName: String = s"$hiveDatabase.$hiveTable"
     def hasCustomTransformer: Boolean = customTransformerClass.nonEmpty
+    def hasCustomFlattener: Boolean   = customFlattenerClass.nonEmpty
+    def param(key: String): String    = extraParams.getOrElse(key, "")
+    def param(key: String, default: String): String = extraParams.getOrElse(key, default)
   }
 
   case class FilterRule(
@@ -90,7 +95,6 @@ object AppConfig {
 
   private def loadKafkaConfig(): KafkaConfig = {
     val c = rootConfig.getConfig("kafka")
-    val s = c.getConfig("ssl")
     KafkaConfig(
       bootstrapServers = c.getString("bootstrap-servers"),
       topic            = c.getString("topic"),
@@ -98,24 +102,48 @@ object AppConfig {
       startingOffsets  = c.getString("starting-offsets"),
       securityProtocol = c.getString("security-protocol"),
       ssl = SslConfig(
-        truststoreLocation = s.getString("truststore-location"),
-        truststorePassword = s.getString("truststore-password"),
-        keystoreLocation   = s.getString("keystore-location"),
-        keystorePassword   = s.getString("keystore-password"),
-        keyPassword        = s.getString("key-password")
+        truststoreLocation = sys.props.getOrElse("ssl.truststore.location", ""),
+        truststorePassword = sys.props.getOrElse("ssl.truststore.password", ""),
+        keystoreLocation   = sys.props.getOrElse("ssl.keystore.location",   ""),
+        keystorePassword   = sys.props.getOrElse("ssl.keystore.password",   ""),
+        keyPassword        = sys.props.getOrElse("ssl.key.password",        "")
       )
     )
   }
 
   private def loadApplicationConfig(): ApplicationConfig = {
     val c = rootConfig.getConfig("application")
-    val fields = c.getConfigList("json.fields").asScala.toList.map { fc =>
-      FieldMapping(
-        name     = fc.getString("name"),
-        path     = fc.getString("path"),
-        dataType = fc.getString("type")
-      )
+
+    val typeOverrides: Map[String, String] =
+      if (c.hasPath("json.type-overrides"))
+        c.getConfigList("json.type-overrides").asScala.toList
+          .map(tc => tc.getString("name") -> tc.getString("type"))
+          .toMap
+      else Map.empty
+
+    val fields = c.getConfigList("json.groups").asScala.toList.flatMap { gc =>
+      val pathPrefix = gc.getString("path")
+      gc.getString("columns").split(",").map(_.trim).filter(_.nonEmpty).map { col =>
+        val parts    = col.split(":").map(_.trim)
+        val srcName  = parts(0)
+        val tgtName  = if (parts.length > 1) parts(1) else srcName
+        val fullPath = if (pathPrefix.isEmpty) srcName else s"$pathPrefix.$srcName"
+        FieldMapping(
+          name     = tgtName,
+          path     = fullPath,
+          dataType = typeOverrides.getOrElse(tgtName, "string")
+        )
+      }
     }
+
+    // Parse extra-params block into a flat Map — open bag for any user-defined keys
+    val extraParams: Map[String, String] =
+      if (c.hasPath("extra-params")) {
+        c.getConfig("extra-params").entrySet().asScala
+          .map(e => e.getKey -> e.getValue.unwrapped().toString)
+          .toMap
+      } else Map.empty
+
     ApplicationConfig(
       hiveDatabase           = c.getString("hive-database"),
       hiveTable              = c.getString("hive-table"),
@@ -125,7 +153,9 @@ object AppConfig {
       primaryKeys            = c.getStringList("primary-keys").asScala.toList,
       dedupLookbackDays      = c.getInt("dedup-lookback-days"),
       customTransformerClass = c.getString("custom-transformer-class"),
-      fieldMappings          = fields
+      customFlattenerClass   = if (c.hasPath("custom-flatten-class")) c.getString("custom-flatten-class") else "",
+      fieldMappings          = fields,
+      extraParams            = extraParams
     )
   }
 

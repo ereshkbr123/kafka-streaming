@@ -1,7 +1,7 @@
-package com.example.streaming.filter
+package com.yourcompany.streaming.filter
 
-import com.example.streaming.config.AppConfig
-import AppConfig.FilterRule
+import com.yourcompany.streaming.config.AppConfig
+import com.yourcompany.streaming.config.AppConfig.FilterRule
 import org.apache.spark.sql.{Column, DataFrame}
 import org.apache.spark.sql.functions._
 

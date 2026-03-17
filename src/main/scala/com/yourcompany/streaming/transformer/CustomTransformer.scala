@@ -1,4 +1,4 @@
-package com.example.streaming.transformer
+package com.yourcompany.streaming.transformer
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 

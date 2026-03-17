@@ -1,11 +1,11 @@
-package com.example.streaming.app
+package com.yourcompany.streaming.app
 
-import com.example.streaming.config.AppConfig
-import com.example.streaming.filter.RecordFilter
-import com.example.streaming.reader.KafkaReader
-import com.example.streaming.transformer.MessageTransformer
-import com.example.streaming.util.{DedupHandler, SparkSessionUtil}
-import com.example.streaming.writer.Writer
+import com.yourcompany.streaming.config.AppConfig
+import com.yourcompany.streaming.filter.RecordFilter
+import com.yourcompany.streaming.reader.KafkaReader
+import com.yourcompany.streaming.transformer.MessageTransformer
+import com.yourcompany.streaming.util.{DedupHandler, SparkSessionUtil}
+import com.yourcompany.streaming.writer.Writer
 import org.apache.spark.sql.streaming.Trigger
 
 /**

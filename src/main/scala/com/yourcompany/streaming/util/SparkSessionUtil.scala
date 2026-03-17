@@ -1,6 +1,6 @@
-package com.example.streaming.util
+package com.yourcompany.streaming.util
 
-import com.example.streaming.config.AppConfig
+import com.yourcompany.streaming.config.AppConfig
 import org.apache.spark.sql.SparkSession
 
 object SparkSessionUtil {

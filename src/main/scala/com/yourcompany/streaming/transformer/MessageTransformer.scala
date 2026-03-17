@@ -1,7 +1,7 @@
-package com.example.streaming.transformer
+package com.yourcompany.streaming.transformer
 
-import com.example.streaming.config.AppConfig
-import AppConfig.FieldMapping
+import com.yourcompany.streaming.config.AppConfig
+import com.yourcompany.streaming.config.AppConfig.FieldMapping
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
@@ -25,6 +25,16 @@ object MessageTransformer {
     if (appConfig.hasCustomTransformer) {
       val cls = Class.forName(appConfig.customTransformerClass)
       Some(cls.getDeclaredConstructor().newInstance().asInstanceOf[CustomTransformer])
+    } else {
+      None
+    }
+  }
+
+  // Lazy-load custom flattener via reflection (once)
+  private lazy val customFlattener: Option[CustomFlattener] = {
+    if (appConfig.hasCustomFlattener) {
+      val cls = Class.forName(appConfig.customFlattenerClass)
+      Some(cls.getDeclaredConstructor().newInstance().asInstanceOf[CustomFlattener])
     } else {
       None
     }
@@ -58,15 +68,26 @@ object MessageTransformer {
 
     val parsedGood = parsedDf.filter(col("parsed").isNotNull)
 
-    // Step 3: Flatten nested fields
-    var flatDf = parsedGood
-    for (field <- appConfig.fieldMappings) {
-      val sparkPath = "parsed." + field.path
-      flatDf = flatDf.withColumn(field.name, col(sparkPath).cast(resolveType(field.dataType)))
+    // Step 3: Flatten — use CustomFlattener if provided, otherwise groups-based logic
+    var flatDf = customFlattener match {
+      case Some(cf) =>
+        // Hand off the parsed struct to the custom class — it owns the flatten entirely
+        cf.flatten(parsedGood, appConfig.extraParams, spark)
+      case None =>
+        // Default: drive from config groups
+        var df = parsedGood
+        for (field <- appConfig.fieldMappings) {
+          val sparkPath = "parsed." + field.path
+          df = df.withColumn(field.name, col(sparkPath).cast(resolveType(field.dataType)))
+        }
+        df
     }
 
     // Step 4: Custom transformer hook
-    val targetColumns = appConfig.fieldMappings.map(_.name)
+    val targetColumns = customFlattener match {
+      case Some(_) => flatDf.columns.toList   // custom flattener owns column list
+      case None    => appConfig.fieldMappings.map(_.name)
+    }
     var resultDf = flatDf.select(targetColumns.map(col): _*)
 
     resultDf = customTransformer match {

@@ -1,6 +1,6 @@
-package com.example.streaming.reader
+package com.yourcompany.streaming.reader
 
-import com.example.streaming.config.AppConfig
+import com.yourcompany.streaming.config.AppConfig
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object KafkaReader {

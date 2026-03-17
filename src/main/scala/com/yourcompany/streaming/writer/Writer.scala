@@ -1,6 +1,6 @@
-package com.example.streaming.writer
+package com.yourcompany.streaming.writer
 
-import com.example.streaming.config.AppConfig
+import com.yourcompany.streaming.config.AppConfig
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 /**
