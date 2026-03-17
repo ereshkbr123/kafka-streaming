@@ -1,0 +1,27 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# Spark / Hadoop local runtime files
+/tmp/
+derby.log
+metastore_db/
+spark-warehouse/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.metals/
+.bloop/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
