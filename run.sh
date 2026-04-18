@@ -46,15 +46,17 @@ load_shell_conf() {
 
     # Extract the body of the shell-vars block.
     #
-    # sed -n: suppress default print-every-line behaviour.
-    # Range /^shell-vars[[:space:]]*{/,/^}/: select lines from the opening
-    #   "shell-vars {" (at column 1) through the first "}" at column 1.
-    # The two /d commands delete the delimiter lines themselves (opening brace
-    #   line and closing brace line), leaving only the key = "value" content.
-    # ^} matches only "}" at column 1 so nested braces in OTHER top-level blocks
-    #   do not accidentally close the range early.
+    # Three-pass sed pipeline — written this way for BSD sed (macOS) compatibility.
+    # BSD sed does not support semicolons to separate commands inside range-pattern
+    # braces (GNU sed does). Splitting into separate passes avoids that portability trap.
+    #
+    # Pass 1: sed -n + range print  — extracts the shell-vars block INCLUDING the
+    #         opening "shell-vars {" line and closing "}" line.
+    # Pass 2: sed '1d'              — removes the first line (opening brace line).
+    # Pass 3: sed '$d'              — removes the last line (closing brace line).
+    # Result: only the key = "value" body lines remain.
     local block
-    block=$(sed -n '/^shell-vars[[:space:]]*{/,/^}/{/^shell-vars[[:space:]]*{/d;/^}/d;p}' "$conf_file")
+    block=$(sed -n '/^shell-vars[[:space:]]*{/,/^}/p' "$conf_file" | sed '1d' | sed '$d')
 
     if [ -z "$block" ]; then
         echo "ERROR [load_shell_conf]: shell-vars block not found or empty in: $conf_file" >&2
@@ -208,11 +210,12 @@ load_spark_confs() {
 
     # Extract the array body.
     #
-    # Range: from the "spark-confs = [" line (at column 1) to the first "]"
-    # at column 1. The two /d commands remove the delimiter lines so we get
-    # only the quoted-string elements inside the array.
+    # Same three-pass BSD-safe sed pipeline as load_shell_conf.
+    # Pass 1: extract from "spark-confs = [" to the first "]" at column 1.
+    # Pass 2: remove the opening line.
+    # Pass 3: remove the closing line.
     local block
-    block=$(sed -n '/^spark-confs[[:space:]]*=[[:space:]]*\[/,/^\]/{/^spark-confs/d;/^\]/d;p}' "$conf_file")
+    block=$(sed -n '/^spark-confs[[:space:]]*=[[:space:]]*\[/,/^\]/p' "$conf_file" | sed '1d' | sed '$d')
 
     if [ -z "$block" ]; then
         # Key present but array body is empty — nothing to add
