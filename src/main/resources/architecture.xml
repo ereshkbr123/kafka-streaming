@@ -1,0 +1,211 @@
+<mxfile host="app.diagrams.net" modified="2026-04-21T12:00:00.000Z" agent="Claude" version="22.0.0" etag="streaming-framework" type="device">
+    <diagram id="streaming-framework" name="Kafka-to-Hive Streaming Framework">
+        <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="2400" math="0" shadow="0">
+            <root>
+                <mxCell id="0" />
+                <mxCell id="1" parent="0" />
+
+                <mxCell id="sb1" value="Configuration Layer" style="swimlane;html=1;startSize=40;fillColor=#fffacd;strokeColor=#d6b656;fontStyle=1;fontSize=13;fontFamily=Helvetica;fontColor=#1f497d;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="20" width="280" height="2340" as="geometry" />
+                </mxCell>
+                <mxCell id="sb2" value="Job Launcher" style="swimlane;html=1;startSize=40;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=13;fontFamily=Helvetica;fontColor=#1f497d;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="20" width="220" height="2340" as="geometry" />
+                </mxCell>
+                <mxCell id="sb3" value="Checkpoint Manager" style="swimlane;html=1;startSize=40;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;fontFamily=Helvetica;fontColor=#1f497d;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="520" y="20" width="440" height="2340" as="geometry" />
+                </mxCell>
+                <mxCell id="sb4" value="Streaming Engine" style="swimlane;html=1;startSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;fontFamily=Helvetica;fontColor=#1f497d;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="960" y="20" width="260" height="2340" as="geometry" />
+                </mxCell>
+                <mxCell id="sb5" value="Dedup &amp; Write Layer" style="swimlane;html=1;startSize=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;fontFamily=Helvetica;fontColor=#1f497d;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1220" y="20" width="310" height="2340" as="geometry" />
+                </mxCell>
+
+                <mxCell id="c1" value="&lt;b&gt;application.conf (HOCON)&lt;/b&gt;&lt;br&gt;&#x2022; app-vars&lt;br&gt;&#x2022; shell-vars&lt;br&gt;&#x2022; spark-confs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="90" width="220" height="100" as="geometry" />
+                </mxCell>
+                <mxCell id="c2" value="Extract shell-vars &amp; spark-confs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="260" width="220" height="55" as="geometry" />
+                </mxCell>
+                <mxCell id="c3" value="Build spark-submit command" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="380" width="220" height="55" as="geometry" />
+                </mxCell>
+
+                <mxCell id="j1" value="Launch Spark Job via Shell Script" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Helvetica;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+                    <mxGeometry x="330" y="380" width="160" height="55" as="geometry" />
+                </mxCell>
+
+                <mxCell id="k1" value="Checkpoint location provided by user?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="490" width="240" height="90" as="geometry" />
+                </mxCell>
+                <mxCell id="k2" value="Create checkpoint at /data/&amp;lt;user_id&amp;gt;/raw/&amp;lt;app_name&amp;gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="650" width="170" height="65" as="geometry" />
+                </mxCell>
+                <mxCell id="k3" value="First run?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="650" y="780" width="180" height="80" as="geometry" />
+                </mxCell>
+                <mxCell id="k4" value="Checkpoint location healthy?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="920" width="170" height="80" as="geometry" />
+                </mxCell>
+                <mxCell id="k5" value="Checkpoint location healthy?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="770" y="920" width="170" height="80" as="geometry" />
+                </mxCell>
+                <mxCell id="k6" value="Recreate checkpoint location" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="1060" width="170" height="55" as="geometry" />
+                </mxCell>
+                <mxCell id="k7" value="Set isReprocessed = true" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="1170" width="170" height="55" as="geometry" />
+                </mxCell>
+                <mxCell id="k8" value="Query audit table for latest offsets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="770" y="1060" width="170" height="55" as="geometry" />
+                </mxCell>
+                <mxCell id="k9" value="Audit table has records?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="770" y="1170" width="170" height="80" as="geometry" />
+                </mxCell>
+                <mxCell id="k10" value="Build offset JSON &#x2192; pass to Structured Streaming" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="770" y="1320" width="170" height="70" as="geometry" />
+                </mxCell>
+                <mxCell id="k11" value="Recreate checkpoint location" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="1320" width="170" height="55" as="geometry" />
+                </mxCell>
+                <mxCell id="k12" value="Set isReprocessed = true" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="540" y="1430" width="170" height="55" as="geometry" />
+                </mxCell>
+
+                <mxCell id="t1" value="Start Kafka Topic Consumer (Structured Streaming)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="985" y="1570" width="210" height="70" as="geometry" />
+                </mxCell>
+                <mxCell id="t2" value="Process micro-batch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="985" y="1710" width="210" height="60" as="geometry" />
+                </mxCell>
+
+                <mxCell id="d1" value="isReprocessed = true?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1250" y="1830" width="200" height="80" as="geometry" />
+                </mxCell>
+                <mxCell id="d2" value="Join with Hive table on dedup keys &#x2192; eliminate duplicates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1235" y="1970" width="230" height="70" as="geometry" />
+                </mxCell>
+                <mxCell id="d3" value="Insert deduplicated records into Hive main table" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1235" y="2100" width="230" height="70" as="geometry" />
+                </mxCell>
+                <mxCell id="d4" value="Insert 1 audit record into Hive audit table" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1235" y="2230" width="230" height="70" as="geometry" />
+                </mxCell>
+
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="c1" target="c2" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="c2" target="c3" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="c3" target="j1" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="j1" target="k1" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+
+                <mxCell id="e5" value="NO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k1" target="k2" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e6" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k1" target="k3" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k2" target="k3" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+
+                <mxCell id="e8" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k3" target="k4" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e9" value="NO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k3" target="k5" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+
+                <mxCell id="e10" value="HEALTHY" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k4" target="t1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="625" y="1540" />
+                            <mxPoint x="1090" y="1540" />
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e11" value="UNHEALTHY / EMPTY" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k4" target="k6" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k6" target="k7" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k7" target="t1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="625" y="1550" />
+                            <mxPoint x="1090" y="1550" />
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+
+                <mxCell id="e14" value="HEALTHY" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k5" target="t1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1090" y="960" />
+                            <mxPoint x="1090" y="1530" />
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e15" value="UNHEALTHY" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k5" target="k8" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k8" target="k9" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e17" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k9" target="k10" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e18" value="NO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="k9" target="k11" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k10" target="t1" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k11" target="k12" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="k12" target="t1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="625" y="1545" />
+                            <mxPoint x="1090" y="1545" />
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+
+                <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="t1" target="t2" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="t2" target="d1" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+
+                <mxCell id="e24" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="d1" target="d2" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e25" value="NO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;fontStyle=1;endArrow=classic;" edge="1" source="d1" target="d3" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1500" y="1870" />
+                            <mxPoint x="1500" y="2135" />
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="d2" target="d3" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+                <mxCell id="e27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontFamily=Helvetica;fontSize=11;endArrow=classic;" edge="1" source="d3" target="d4" parent="1">
+                    <mxGeometry relative="1" as="geometry" />
+                </mxCell>
+
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
